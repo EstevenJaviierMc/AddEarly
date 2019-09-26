@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {Apollo} from 'apollo-angular';
 import gql from 'graphql-tag';
+import Observable from 'rxjs/Observable';
+import map from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +11,7 @@ import gql from 'graphql-tag';
 })
 
 export class AppComponent implements OnInit {
- Books: any[];
+ Books: Observable<any>[];
   loading = true;
   error: any;
 
@@ -27,10 +29,10 @@ export class AppComponent implements OnInit {
           }
         `,
       })
-      .valueChanges.subscribe(result => {
-        this.Books = result.data && result.data['books'];
+      .valueChanges.pipe(map(result => {
+        this.Books = result.data && result.data.books;
         this.loading = result.loading;
-        this.error = result['books'];
-      });
+        this.error = result.books;
+      }));
   }
 }
